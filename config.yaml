@@ -1,4 +1,5 @@
-llm: ollama            # ollama | anthropic
+llm: anthropic         # ollama | anthropic
 retrieval: hybrid_rerank  # vector | hybrid | hybrid_rerank
 top_k: 5
 candidates: 20         # per-retriever pool before fusion / rerank
+min_rerank_score: 0.3  # below this, refuse with INSUFFICIENT_CONTEXT

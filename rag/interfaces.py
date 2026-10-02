@@ -18,6 +18,31 @@ class Store(Protocol):
     def knn(self, vector: list[float], k: int) -> list[dict]: ...
 
 
+class LLM(Protocol):
+    def complete(self, system: str, user: str) -> str: ...
+
+
+class OllamaLLM:
+    def __init__(self, model: str = "llama3.1:8b"):
+        import ollama
+        self.client, self.model = ollama.Client(), model
+
+    def complete(self, system, user):
+        msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+        return self.client.chat(self.model, msgs, options={"temperature": 0})["message"]["content"]
+
+
+class AnthropicLLM:
+    def __init__(self, model: str = "claude-sonnet-5-5"):
+        import anthropic
+        self.client, self.model = anthropic.Anthropic(), model
+
+    def complete(self, system, user):
+        msg = self.client.messages.create(model=self.model, max_tokens=1024, system=system,
+                                          messages=[{"role": "user", "content": user}])
+        return "".join(b.text for b in msg.content if b.type == "text")
+
+
 class BgeEmbedder:
     def __init__(self, model: str = "BAAI/bge-small-en-v1.5"):
         self.model = SentenceTransformer(model)
