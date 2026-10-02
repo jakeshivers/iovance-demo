@@ -1,0 +1,4 @@
+llm: ollama            # ollama | anthropic
+retrieval: hybrid_rerank  # vector | hybrid | hybrid_rerank
+top_k: 5
+candidates: 20         # per-retriever pool before fusion / rerank

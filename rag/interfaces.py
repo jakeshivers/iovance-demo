@@ -14,6 +14,8 @@ class Embedder(Protocol):
 
 class Store(Protocol):
     def replace_doc(self, doc: str, chunks: list[dict]) -> int: ...
+    def bm25(self, query: str, k: int) -> list[dict]: ...
+    def knn(self, vector: list[float], k: int) -> list[dict]: ...
 
 
 class BgeEmbedder:
@@ -35,3 +37,14 @@ class OpenSearchStore:
         actions = [{"_index": self.index, "_id": f"{doc}-{i}", **c} for i, c in enumerate(chunks)]
         ok, _ = helpers.bulk(self.client, actions, refresh=True)
         return ok
+
+    def _search(self, query, k):
+        body = {"size": k, "query": query, "_source": {"excludes": ["embedding"]}}
+        hits = self.client.search(index=self.index, body=body)["hits"]["hits"]
+        return [{"id": h["_id"], "score": h["_score"], **h["_source"]} for h in hits]
+
+    def bm25(self, query, k):
+        return self._search({"match": {"text": query}}, k)
+
+    def knn(self, vector, k):
+        return self._search({"knn": {"embedding": {"vector": vector, "k": k}}}, k)
