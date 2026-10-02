@@ -1,0 +1,42 @@
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.17.1
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "9200:9200"
+    volumes:
+      - osdata:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf localhost:9200/_cluster/health || exit 1"]
+      interval: 5s
+      retries: 30
+
+  init-index:
+    image: curlimages/curl:8.10.1
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    restart: "no"
+    command:
+      - sh
+      - -c
+      - |
+        curl -s -o /dev/null -w '%{http_code}' opensearch:9200/regdocs | grep -q 200 && exit 0
+        curl -s -X PUT opensearch:9200/regdocs -H 'Content-Type: application/json' -d '{
+          "settings": {"index": {"knn": true}},
+          "mappings": {"properties": {
+            "text": {"type": "text"},
+            "embedding": {"type": "knn_vector", "dimension": 384,
+              "method": {"name": "hnsw", "engine": "lucene", "space_type": "cosinesimil"}},
+            "doc": {"type": "keyword"},
+            "section": {"type": "keyword"},
+            "page": {"type": "integer"}
+          }}
+        }'
+
+volumes:
+  osdata:
