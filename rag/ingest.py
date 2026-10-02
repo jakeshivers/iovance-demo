@@ -21,13 +21,14 @@ HEADINGS = [
 ]
 
 
-def page_lines(text: str) -> list[str]:
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
+def raw_lines(text: str) -> list[str]:
     if "......" in text or "TABLE OF CONTENTS" in text.upper()[:200]:
         return []
-    numbered = sum(bool(LINE_NO.search(l)) for l in lines)
-    if lines and numbered / len(lines) > 0.5:  # margin line numbers
-        lines = [LINE_NO.sub("", l) for l in lines]
+    return [l.strip() for l in text.splitlines() if l.strip()]
+
+
+def page_lines(text: str, numbered: bool) -> list[str]:
+    lines = [LINE_NO.sub("", l) for l in raw_lines(text)] if numbered else raw_lines(text)
     return [l for l in lines if not BOILERPLATE.match(l)]
 
 
@@ -37,15 +38,18 @@ def match_heading(line: str):
     for level, pat in HEADINGS:
         if m := pat.match(line):
             num, title = next(g for g in m.groups()[:-1] if g), m.groups()[-1]
-            return level, num, re.sub(r"\s*\d+$", "", title).strip()  # drop footnote/line nos
+            return level, num, re.sub(r"(?<=[A-Za-z])\d{1,2}$", "", title).strip()  # drop glued footnote marker
     return None
 
 
 def sections(path: Path):
     """Yield (section_label, [(word, page), ...]) per heading."""
     nums, label, words = [None] * 4, "Preamble", []
-    for pno, page in enumerate(PdfReader(path).pages, 1):
-        for line in page_lines(page.extract_text() or ""):
+    texts = [p.extract_text() or "" for p in PdfReader(path).pages]
+    lines = [l for t in texts for l in raw_lines(t)]
+    numbered = bool(lines) and sum(bool(LINE_NO.search(l)) for l in lines) / len(lines) > 0.25  # margin line nos
+    for pno, text in enumerate(texts, 1):
+        for line in page_lines(text, numbered):
             if h := match_heading(line):
                 if words:
                     yield label, words
