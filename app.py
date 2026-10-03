@@ -1,10 +1,16 @@
 """Streamlit UI over the existing rag functions."""
+from pathlib import Path
+
 import streamlit as st
 
 from rag.generate import REFUSAL, answer, make_llm
 from rag.retrieve import CFG, cite
 
 MODES = ["vector", "hybrid", "hybrid_rerank"]
+
+st.sidebar.header("Document library")
+for pdf in sorted(Path("static").glob("*.pdf")):
+    st.sidebar.markdown(f"[{pdf.stem}](app/static/{pdf.name})")
 
 st.title("Regulatory RAG Demo")
 mode = st.selectbox("Retrieval mode", MODES, index=MODES.index(CFG["retrieval"]))
