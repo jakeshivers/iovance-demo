@@ -48,11 +48,6 @@ Last updated: 2026-10-02 · Repo: https://github.com/jakeshivers/iovance-demo (p
 - Phase 7 acceptance: MCP tool not yet tested from Claude Desktop (not installed here; stdio smoke test passes).
 - Optional: agent eval scenarios (expected gaps per scenario) in the golden set.
 
-## Interview talking points
-- JD coverage: RAG, eval-as-deliverable, MCP, input/output guardrails + injection defense, CI/CD, OpenSearch,
-  Claude vs open-weight, audit logging, agent. Gaps: AWS (design note only), Redshift, GPT/Gemini, event-driven.
-- Live demo: poisoned doc retrieved but ignored; PII redacted in `rag.log`; page links verify citations.
-
 ## Known limitations
 - 2 wrongful refusals (shared-login, blank-forms Qs): right chunk #1 but rerank < 0.3. Threshold deliberately
   not tuned (tattoo-ink refusal Q scores 0.061).

@@ -9,3 +9,6 @@ wheels/
 # Virtual environments
 .venv
 rag.log
+
+# Private notes
+INTERVIEW.md
