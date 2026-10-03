@@ -47,14 +47,19 @@ Last updated: 2026-10-02 · Repo: https://github.com/jakeshivers/iovance-demo (p
   extra "gap": record has only tester + date, CSA §V.A.6 wants more — defensible, not a false positive.
   Not in CI (needs Anthropic API). Full table in README.
 
+- Phase 7 acceptance PASSED (2026-10-03): Claude Desktop (Linux beta, Mint 22.3) called `search_regulatory_docs`,
+  cited part11_scope_2003 §III.C.2 p.9, and flagged + ignored the poisoned doc (CANARY-7731) unprompted.
+  Note: Desktop's Claude isn't bound by our "context only" prompt — its §11.10(e) summary was uncited own knowledge.
+
 ## Environment notes
+- Claude Desktop MCP config: `~/.config/Claude/claude_desktop_config.json` → `mcpServers.regulatory-docs`
+  (absolute `uv` path). Logs: `~/.config/Claude/logs/mcp-server-regulatory-docs.log`.
 - Ollama installed user-local (no sudo): `~/.local/ollama/bin/ollama serve`. Not on PATH; restart after reboot.
 - `ANTHROPIC_API_KEY` lives in `~/.zshrc`; Claude Code sessions only see it via `zsh -ic '...'`.
 - Run UI: `uv run streamlit run app.py` (from zsh). Restart Streamlit after config changes.
 - `eval/run_eval.py` removes `zz_poisoned_test` from the index; `uv run python -m rag.ingest` restores it.
 
 ## Open items
-- Phase 7 acceptance: MCP tool not yet tested from Claude Desktop (not installed here; stdio smoke test passes).
 
 ## Known limitations
 - 2 wrongful refusals (shared-login, blank-forms Qs): right chunk #1 but rerank < 0.3. Threshold deliberately
