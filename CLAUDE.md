@@ -58,4 +58,4 @@ config.yaml           # llm: ollama|anthropic, retrieval: vector|hybrid|hybrid_r
 ✅ `streamlit run app.py` answers a question in all three modes.
 
 ## Out of Scope
-UI, auth, multi-tenancy, streaming, Docker for the app itself, AWS deployment, any extra models.
+Auth, multi-tenancy, streaming, Docker for the app itself, AWS deployment, any extra models.
