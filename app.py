@@ -26,5 +26,5 @@ if q:
     score_label = "rerank score" if mode == "hybrid_rerank" else f"{mode} score"
     for h in hits:
         with st.expander(f"{cite(h)} · {score_label} {h['score']:.3f}"):
-            st.write(f"**Doc:** {h['doc']}  **Section:** {h['section']}  **Page:** {h['page']}")
+            st.write(f"**Doc:** {h['doc']}  **Section:** {h['section']}  **Page:** [{h['page']}](app/static/{h['doc']}.pdf#page={h['page']})")
             st.text(h["text"])
