@@ -54,5 +54,8 @@ config.yaml           # llm: ollama|anthropic, retrieval: vector|hybrid|hybrid_r
 **7. MCP + README** — FastMCP server exposing read-only `search_regulatory_docs(query)` returning cited chunks. README: setup, architecture diagram (mermaid), eval table, "Swap to AWS" section mapping each interface to Bedrock / S3 Vectors / OpenSearch Service.
 ✅ Tool works from Claude Desktop.
 
+**8. UI (only after 1–7 pass)** — Single file `app.py`, Streamlit. Question box; answer with citations; expandable source cards (doc, section, page, text, rerank score); dropdown for retrieval mode; distinct refusal display. Calls existing rag functions only — no new logic, no styling work.
+✅ `streamlit run app.py` answers a question in all three modes.
+
 ## Out of Scope
 UI, auth, multi-tenancy, streaming, Docker for the app itself, AWS deployment, any extra models.
