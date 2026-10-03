@@ -1,47 +1,61 @@
 # Progress — Regulatory RAG Demo
 
-Last updated: 2026-10-02
+Last updated: 2026-10-02 · Repo: https://github.com/jakeshivers/iovance-demo (public, `main` in sync)
 
-## Done (committed)
-- Phase 1 — OpenSearch + `regdocs` index (`docker-compose.yml`, init-index container)
-- Phase 2 — ingest: heading chunking, bge-small embeddings, bulk index (145 chunks incl. poisoned doc)
-- Phase 3 — bm25 / vector / hand-written RRF / bge-reranker; mode in `config.yaml`
-- Phase 4 — `LLM` interface (Ollama + Anthropic), cited answers, refusal if top rerank < 0.3
-- Phase 5 — Presidio PII redaction (`rag.log`), `<document>` data wrapping, `docs/zz_poisoned_test.pdf`
-- FDA PDFs committed (needed by CI)
+## Done: all phases 1–9 committed and pushed
+| Phase | Commit | What |
+|---|---|---|
+| 1 Infra | — | OpenSearch 2.17 in Docker, `regdocs` index (BM25 `text`, 384-d HNSW `embedding`, doc/section/page) |
+| 2 Ingest | d397833 | pypdf, heading chunking (~500 tok / 50 overlap), bge-small embeddings, bulk index |
+| 3 Retrieve | f7be0f9 | bm25, vector, hand-written RRF (k=60), bge-reranker; mode in `config.yaml` |
+| 4 Generate | 1a3ddc3 | `LLM` interface (Ollama + Anthropic), `[doc §section p.page]` citations, refuse if top rerank < 0.3 |
+| 5 Guard | ef961eb | Presidio PII redaction (logged to `rag.log`), `<document>` data wrapping, `docs/zz_poisoned_test.pdf` (CANARY-7731) |
+| 6 Eval | 5fe4462 | 30-Q golden set, `eval/run_eval.py`, GitHub Action recall gate (baseline 0.96) |
+| 7 MCP + README | e22f37c | FastMCP `search_regulatory_docs` (`mcp<2` pinned — 2.x renamed FastMCP), README w/ mermaid, eval table, AWS section |
+| 8 UI | aa48700 | Streamlit `app.py`: question box, mode dropdown, cited answer, source cards, refusal box |
+| 9 Agent | 70ac72d | `rag/agent.py` compliance gap assessor: raw Anthropic tool-use loop, `report_findings`, ⚠ UNVERIFIED citation guardrail, max 10 turns |
 
-## Phase 6 — COMMITTED 5fe4462 (anthropic + ollama tables in README)
+### Post-phase additions (all pushed)
+- 6ceb649 — CLAUDE.md: removed "UI" from Out of Scope (contradicted Phase 8).
+- a68f8ca — UI document library sidebar: `static` → `docs/` symlink + `.streamlit/config.toml` static serving.
+- 2851fb4 — Source card page numbers link to `…pdf#page=N`.
+- 38a05c5 — README: agent section (diagram, example table), commands table, agent row in AWS table.
+- f9e1c81 — README: "Swap to AWS (design note)" — demo is fully local, nothing on AWS is implemented.
+- 6445f09 — UI: "Gap assessment (agent)" tab; Ask answers cached (`st.cache_data`) so reruns don't re-query.
 
-### (old notes)
-Uncommitted: `eval/golden.jsonl`, `eval/run_eval.py`, `.github/workflows/eval.yml`,
-`config.yaml` (`baseline_recall_at_5: 0.96`), `rag/interfaces.py` (`max_tokens` 1024 -> 2048).
+## Eval results (local, CPU only)
+| mode | llm | recall@5 | citation acc | refusal acc | p50 latency |
+|---|---|---|---|---|---|
+| vector | anthropic | 96% | 84% | 90% | 4.59s |
+| hybrid | anthropic | 100% | 88% | 93% | 5.08s |
+| hybrid_rerank | anthropic | 100% | 88% | 93% | 23.04s |
+| vector | ollama | 96% | 72% | 90% | 51.66s |
+| hybrid | ollama | 100% | 72% | 93% | 59.11s |
+| hybrid_rerank | ollama | 100% | 72% | 93% | 71.55s |
 
-Verified so far (`--llms none`, retrieval only):
+- CI (GitHub, retrieval-only): **passed**, hybrid_rerank recall@5 = 1.000 vs 0.96. Vector scored 92% in CI vs 96%
+  locally (fresh index on different hardware; near-tie ranking — unconfirmed). Gate only checks hybrid_rerank.
+- Agent on LIMS scenario: flags shared login + disabled audit trails as high-severity cited gaps, ~25–65s;
+  retrieves the poisoned doc and ignores it.
 
-| mode | recall@5 | refusal acc | p50 latency |
-|---|---|---|---|
-| vector | 96% | 93% | 0.99s |
-| hybrid | 100% | 93% | 1.05s |
-| hybrid_rerank | 100% | 93% | 10.83s |
+## Environment notes
+- Ollama installed user-local (no sudo): `~/.local/ollama/bin/ollama serve`. Not on PATH; restart after reboot.
+- `ANTHROPIC_API_KEY` lives in `~/.zshrc`; Claude Code sessions only see it via `zsh -ic '...'`.
+- Run UI: `uv run streamlit run app.py` (from zsh). Restart Streamlit after config changes.
+- `eval/run_eval.py` removes `zz_poisoned_test` from the index; `uv run python -m rag.ingest` restores it.
 
-- `--check-baseline` exits 0 at 0.96, exits 1 at 1.01 (tested).
-- 93% refusal = 2 wrongful refusals (shared-login, blank-forms Qs): right chunk ranked #1 but
-  rerank score < 0.3. Deliberately NOT tuned (tattoo-ink refusal Q scores 0.061).
+## Open items
+- Phase 7 acceptance: MCP tool not yet tested from Claude Desktop (not installed here; stdio smoke test passes).
+- Optional: agent eval scenarios (expected gaps per scenario) in the golden set.
 
-### Next steps
-- 2026-10-02: Ollama installed user-local (no sudo) at `~/.local/ollama/bin/ollama`; start with `~/.local/ollama/bin/ollama serve`. API key only visible via `zsh -ic '...'`. Anthropic + Ollama (all 3 modes) evals launched.
-1. Ollama: user installs (`curl -fsSL https://ollama.com/install.sh | sh`, needs sudo) and
-   runs `ollama pull llama3.1:8b`. No GPU here -> CPU, ~1–2 min/answer.
-   Decide: full 3-mode Ollama run (~1.5–3 h, background) or hybrid_rerank only.
-2. Confirm Claude Code session can see `ANTHROPIC_API_KEY` (wasn't visible to the old session).
-3. Run `uv run python eval/run_eval.py` (default: ollama + anthropic). Paste table into README later.
-4. Commit: `phase 6: golden set, eval runner, CI recall gate`.
-5. Note: eval removes `zz_poisoned_test` from the index; `uv run python -m rag.ingest` restores it.
+## Interview talking points
+- JD coverage: RAG, eval-as-deliverable, MCP, input/output guardrails + injection defense, CI/CD, OpenSearch,
+  Claude vs open-weight, audit logging, agent. Gaps: AWS (design note only), Redshift, GPT/Gemini, event-driven.
+- Live demo: poisoned doc retrieved but ignored; PII redacted in `rag.log`; page links verify citations.
 
-## Phase 7 — COMMITTED e22f37c. Stdio smoke test passes; awaiting Claude Desktop check (not installed on this machine).
-## Phase 8 — COMMITTED (app.py). AppTest passes all 3 modes + refusal. CLAUDE.md "Out of Scope: UI" fix left to user (edit blocked by auto-mode).
-
-## Known limitations (for interview / README)
+## Known limitations
+- 2 wrongful refusals (shared-login, blank-forms Qs): right chunk #1 but rerank < 0.3. Threshold deliberately
+  not tuned (tattoo-ink refusal Q scores 0.061).
 - Heading parser misses data-integrity Q13; AI doc `i.` items labeled `IV.A.4.i`.
 - Reranking 40 candidates on CPU ~10s per query.
 - Anthropic SDK 1.11 rejects `temperature`; Claude calls use default sampling.
