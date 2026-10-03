@@ -1,7 +1,7 @@
 # Regulatory RAG Demo — Build Spec
 
 ## Goal
-Local hybrid RAG over public FDA guidance PDFs. Interview demo. Not a product.
+Local hybrid RAG over public FDA guidance PDFs. Demo. Not a product.
 
 ## Agent Rules (follow strictly)
 - Do ONLY the current phase. Stop and report when its acceptance check passes.

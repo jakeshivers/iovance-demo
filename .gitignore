@@ -10,5 +10,3 @@ wheels/
 .venv
 rag.log
 
-# Private notes
-INTERVIEW.md

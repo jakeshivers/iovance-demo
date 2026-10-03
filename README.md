@@ -1,6 +1,6 @@
 # Regulatory RAG Demo
 
-Local hybrid RAG over public FDA guidance PDFs (Part 11, data integrity, CSA, AI). Answers cite `[doc §section p.page]` for every claim and refuse with `INSUFFICIENT_CONTEXT` when retrieval is weak. Interview demo, not a product.
+Local hybrid RAG over public FDA guidance PDFs (Part 11, data integrity, CSA, AI). Answers cite `[doc §section p.page]` for every claim and refuse with `INSUFFICIENT_CONTEXT` when retrieval is weak. Demo, not a product.
 
 ## Setup
 
