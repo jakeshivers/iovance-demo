@@ -7,6 +7,7 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "anthropic>=1.11.0",
     "en-core-web-sm",
+    "mcp<2",
     "ollama>=0.6.3",
     "opensearch-py>=3.2.0",
     "presidio-analyzer>=2.2.364",
