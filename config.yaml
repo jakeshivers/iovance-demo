@@ -3,3 +3,4 @@ retrieval: hybrid_rerank  # vector | hybrid | hybrid_rerank
 top_k: 5
 candidates: 20         # per-retriever pool before fusion / rerank
 min_rerank_score: 0.3  # below this, refuse with INSUFFICIENT_CONTEXT
+baseline_recall_at_5: 0.96  # CI floor for hybrid_rerank (measured 1.00; one question of slack)

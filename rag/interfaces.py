@@ -38,7 +38,7 @@ class AnthropicLLM:
         self.client, self.model = anthropic.Anthropic(), model
 
     def complete(self, system, user):
-        msg = self.client.messages.create(model=self.model, max_tokens=1024, system=system,
+        msg = self.client.messages.create(model=self.model, max_tokens=2048, system=system,
                                           messages=[{"role": "user", "content": user}])
         return "".join(b.text for b in msg.content if b.type == "text")
 

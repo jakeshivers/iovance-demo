@@ -1,0 +1,15 @@
+name: retrieval-eval
+on: [push, pull_request]
+
+jobs:
+  recall:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start OpenSearch and create index
+        run: docker compose up -d && docker compose wait init-index
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - run: uv run python -m rag.ingest
+      - name: Fail if hybrid_rerank recall@5 drops below baseline
+        run: uv run python eval/run_eval.py --llms none --check-baseline

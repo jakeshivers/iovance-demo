@@ -1,0 +1,30 @@
+{"q": "Does FDA intend to enforce the Part 11 audit trail requirements?", "expected_section": "part11_scope_2003 §III.C.2", "should_refuse": false}
+{"q": "Will FDA take enforcement action on Part 11 validation requirements for computerized systems?", "expected_section": "part11_scope_2003 §III.C.1", "should_refuse": false}
+{"q": "How does FDA treat systems that were already operational before Part 11 became effective in 1997?", "expected_section": "part11_scope_2003 §III.C.3", "should_refuse": false}
+{"q": "Can firms give FDA investigators copies of electronic records in common portable formats like PDF?", "expected_section": "part11_scope_2003 §III.C.4", "should_refuse": false}
+{"q": "Can electronic records be archived to paper or microfilm to satisfy record retention requirements?", "expected_section": "part11_scope_2003 §III.C.5", "should_refuse": false}
+{"q": "Under the 2003 guidance, which records are considered Part 11 records?", "expected_section": "part11_scope_2003 §III.B.2", "should_refuse": false}
+{"q": "What does FDA mean by a narrow interpretation of the scope of Part 11?", "expected_section": "part11_scope_2003 §III.B.1", "should_refuse": false}
+{"q": "What counts as metadata for CGMP records?", "expected_section": "data_integrity_cgmp_2018 §III.1.b", "should_refuse": false}
+{"q": "How does FDA define data integrity and the ALCOA principles?", "expected_section": "data_integrity_cgmp_2018 §III.1.a", "should_refuse": false}
+{"q": "Which personnel are responsible for reviewing audit trails for CGMP records?", "expected_section": "data_integrity_cgmp_2018 §III.7", "should_refuse": false}
+{"q": "Is it acceptable for laboratory analysts to share a single login account?", "expected_section": "data_integrity_cgmp_2018 §III.5", "should_refuse": false}
+{"q": "How should uncontrolled blank forms such as batch record templates be managed?", "expected_section": "data_integrity_cgmp_2018 §III.6", "should_refuse": false}
+{"q": "Can a firm invalidate an out-of-specification test result and leave it out of compliance decisions?", "expected_section": "data_integrity_cgmp_2018 §III.2", "should_refuse": false}
+{"q": "Can FDA investigators examine electronic records during a CGMP inspection?", "expected_section": "data_integrity_cgmp_2018 §III.17", "should_refuse": false}
+{"q": "What is the difference between static and dynamic record formats?", "expected_section": "data_integrity_cgmp_2018 §III.1.d", "should_refuse": false}
+{"q": "Is it acceptable to keep only the final results after reprocessing chromatography data?", "expected_section": "data_integrity_cgmp_2018 §III.14", "should_refuse": false}
+{"q": "How often must audit trails for CGMP data be reviewed?", "expected_section": "data_integrity_cgmp_2018 §III.8", "should_refuse": false}
+{"q": "How should a device manufacturer determine the intended use of software used in production or the quality system?", "expected_section": "csa_2026 §V.A.1", "should_refuse": false}
+{"q": "How does computer software assurance decide whether a software feature poses high process risk?", "expected_section": "csa_2026 §V.A.2", "should_refuse": false}
+{"q": "When are unscripted or ad-hoc testing approaches appropriate for software assurance?", "expected_section": "csa_2026 §V.A.4", "should_refuse": false}
+{"q": "What should the record of software assurance activities include?", "expected_section": "csa_2026 §V.A.6", "should_refuse": false}
+{"q": "How would computer software assurance apply to a learning management system used for training records?", "expected_section": "csa_2026 §Appendix A.2", "should_refuse": false}
+{"q": "How is AI model risk determined from model influence and decision consequence?", "expected_section": "ai_regulatory_2025 §IV.A.3", "should_refuse": false}
+{"q": "What is the context of use for an AI model in drug development?", "expected_section": "ai_regulatory_2025 §IV.A.2", "should_refuse": false}
+{"q": "How should sponsors maintain AI model credibility over the product life cycle when inputs drift?", "expected_section": "ai_regulatory_2025 §IV.B", "should_refuse": false}
+{"q": "What are FDA's labeling requirements for cosmetic tattoo inks?", "expected_section": "", "should_refuse": true}
+{"q": "How much does Medicare reimburse for an outpatient CT scan?", "expected_section": "", "should_refuse": true}
+{"q": "What fines can EU regulators impose under GDPR for a data breach?", "expected_section": "", "should_refuse": true}
+{"q": "What is the maximum daily dose of ibuprofen for adults?", "expected_section": "", "should_refuse": true}
+{"q": "What is the best pizza topping?", "expected_section": "", "should_refuse": true}
