@@ -22,6 +22,7 @@ uv run python -m rag.generate "What does Part 11 require for audit trails?"
 | `uv run python -m rag.retrieve "q" vector hybrid hybrid_rerank` | Ranked citations per mode |
 | `uv run python -m rag.generate "q"` | Cited answer or refusal |
 | `uv run python eval/run_eval.py` | Golden-set comparison table |
+| `uv run python eval/run_agent_eval.py` | Agent scenario eval (Anthropic) |
 | `uv run python -m rag.mcp_server` | MCP server (stdio) |
 | `uv run python -m rag.agent "system description"` | Compliance gap assessment (Anthropic) |
 | `uv run streamlit run app.py` | UI with document library |
@@ -112,6 +113,32 @@ Example: `"Our LIMS uses a shared analyst login. Audit trails are off for perfor
 |---|---|---|---|
 | Shared analyst login | gap | high | [data_integrity_cgmp_2018 §III.5 p.11] |
 | Audit trails off for performance | gap | high | [data_integrity_cgmp_2018 §III.1.c p.8] [part11_scope_2003 §III.C.2 p.9] |
+
+### Agent eval
+
+`eval/agent_scenarios.jsonl` has 9 scenarios with 13 expected findings: 6 scenarios contain gaps, and 3 are compliant controls included to catch over-flagging.
+
+- **When a finding counts as hit:** the agent returns that verdict *and* cites one of the accepted sections, using the same section matching as the retrieval eval.
+- **CI:** this eval isn't run in CI, because it calls the Anthropic API.
+
+| # | scenario | expected hit | agent verdicts |
+|---|---|---|---|
+| 1 | LIMS shared login, audit trails off | 2/2 | gap, gap, gap, unclear |
+| 2 | Uncontrolled blank batch record forms | 1/1 | gap, gap |
+| 3 | OOS result invalidated without investigation | 1/1 | gap, gap, gap |
+| 4 | Chromatography reprocessed, only final kept | 1/1 | gap, gap |
+| 5 | Paper printouts kept, electronic originals deleted | 1/1 | gap, gap, gap |
+| 6 | Unique logins, RBAC, QA audit-trail review | 2/2 | compliant ×3 |
+| 7 | Part 11 microfilm archive, PDF copies to investigators | 2/2 | compliant ×2 |
+| 8 | CSA ad-hoc testing for LMS | 1/1 | compliant ×3, gap |
+| 9 | AI model: no context of use, risk, or drift monitoring | 2/2 | gap ×4 |
+
+**Summary:**
+- **Finding recall:** 100% (13/13).
+- **Unverified citations:** 0 of 53, so the output guardrail never fired.
+- **p50 latency:** 30s.
+
+**Scenario 8:** the one "gap" in a compliant scenario is a stricter-than-expected finding, not a false positive. CSA §V.A.6 expects the assurance record to hold more than the tester and the date (intended use, risk, the testing done, issues found and a conclusion), and the scenario described only those two.
 
 ## MCP (Claude Desktop)
 

@@ -42,6 +42,11 @@ Last updated: 2026-10-02 · Repo: https://github.com/jakeshivers/iovance-demo (p
 - Agent on LIMS scenario: flags shared login + disabled audit trails as high-severity cited gaps, ~25–65s;
   retrieves the poisoned doc and ignores it.
 
+- Agent eval (`eval/run_agent_eval.py`, 9 scenarios / 13 expected findings, 3 compliant controls):
+  **finding recall 100% (13/13), unverified citations 0/53, p50 30s.** Scenario 8 (CSA LMS, compliant) got one
+  extra "gap": record has only tester + date, CSA §V.A.6 wants more — defensible, not a false positive.
+  Not in CI (needs Anthropic API). Full table in README.
+
 ## Environment notes
 - Ollama installed user-local (no sudo): `~/.local/ollama/bin/ollama serve`. Not on PATH; restart after reboot.
 - `ANTHROPIC_API_KEY` lives in `~/.zshrc`; Claude Code sessions only see it via `zsh -ic '...'`.
@@ -50,7 +55,6 @@ Last updated: 2026-10-02 · Repo: https://github.com/jakeshivers/iovance-demo (p
 
 ## Open items
 - Phase 7 acceptance: MCP tool not yet tested from Claude Desktop (not installed here; stdio smoke test passes).
-- Optional: agent eval scenarios (expected gaps per scenario) in the golden set.
 
 ## Known limitations
 - 2 wrongful refusals (shared-login, blank-forms Qs): right chunk #1 but rerank < 0.3. Threshold deliberately
