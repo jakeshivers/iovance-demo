@@ -22,6 +22,10 @@ Last updated: 2026-10-02 · Repo: https://github.com/jakeshivers/iovance-demo (p
 - 38a05c5 — README: agent section (diagram, example table), commands table, agent row in AWS table.
 - f9e1c81 — README: "Swap to AWS (design note)" — demo is fully local, nothing on AWS is implemented.
 - 6445f09 — UI: "Gap assessment (agent)" tab; Ask answers cached (`st.cache_data`) so reruns don't re-query.
+- 5c84164 — TODO rewritten with phases 6–9, UI additions, CI and eval results.
+- 77ac10f / 5639445 — Repo-facing docs made neutral: TODO trimmed to project status; README + CLAUDE.md
+  goal line now "Demo, not a product."; private notes ignored locally via `.git/info/exclude` (not `.gitignore`).
+  Git history intentionally not rewritten — older commits keep the earlier wording.
 
 ## Eval results (local, CPU only)
 | mode | llm | recall@5 | citation acc | refusal acc | p50 latency |
