@@ -23,6 +23,8 @@ uv run python -m rag.generate "What does Part 11 require for audit trails?"
 | `uv run python -m rag.generate "q"` | Cited answer or refusal |
 | `uv run python eval/run_eval.py` | Golden-set comparison table |
 | `uv run python -m rag.mcp_server` | MCP server (stdio) |
+| `uv run python -m rag.agent "system description"` | Compliance gap assessment (Anthropic) |
+| `uv run streamlit run app.py` | UI with document library |
 
 ## Architecture
 
@@ -78,6 +80,39 @@ flowchart LR
 - The heading parser misses data-integrity Q13.
 - The AI guidance's `i.` items are labeled `IV.A.4.i`.
 
+## Agent: compliance gap assessor
+
+`rag/agent.py` is a raw Anthropic tool-use loop of about 80 lines, with no agent framework. You give it a description of a system or SOP. It then:
+
+1. Splits the description into separate claims.
+2. Calls `search_regulatory_docs` for each claim, refining queries when results are weak.
+3. Judges each claim as `compliant`, `gap` or `unclear`, using only the retrieved guidance.
+4. Calls `report_findings` with a severity, citations and a remediation for each claim.
+
+```mermaid
+flowchart LR
+    D[System description] --> R[guard.redact]
+    R --> C[Claude]
+    C -->|tool_use| S[search_regulatory_docs]
+    S -->|wrapped chunks| C
+    C -->|tool_use| F[report_findings]
+    F --> V{citation in<br/>retrieved set?}
+    V -->|no| U[flag ⚠ UNVERIFIED]
+    V --> T[Findings table]
+```
+
+- **Bounded loop:** at most 10 turns. The last turn forces a `report_findings` call, so the loop always ends with an answer.
+- **Output guardrail:** the code tracks which citations it actually retrieved. Any citation not in that set is flagged, which catches invented references at runtime.
+- **Audit trail:** every search query, the citations it returned, and the final findings are written to `rag.log`.
+- **Injection:** the agent's audit-trail searches retrieve the poisoned doc, and the agent still reports disabled audit trails as a gap.
+
+Example: `"Our LIMS uses a shared analyst login. Audit trails are off for performance."`
+
+| claim | verdict | severity | citations |
+|---|---|---|---|
+| Shared analyst login | gap | high | [data_integrity_cgmp_2018 §III.5 p.11] |
+| Audit trails off for performance | gap | high | [data_integrity_cgmp_2018 §III.1.c p.8] [part11_scope_2003 §III.C.2 p.9] |
+
 ## MCP (Claude Desktop)
 
 `rag/mcp_server.py` exposes one read-only tool, `search_regulatory_docs(query)`. It returns the top hybrid_rerank chunks, and each one includes its citation and rerank score. Add this to `claude_desktop_config.json`:
@@ -104,6 +139,7 @@ Each component sits behind a protocol in `rag/interfaces.py`. Moving to AWS mean
 | `Store` | OpenSearch 2.x in Docker | **Amazon OpenSearch Service** (BM25 + kNN in one index; hybrid works unchanged). **S3 Vectors** is a cheaper option for the vector side, but it has no BM25, so hybrid would need OpenSearch anyway. |
 | `Embedder` | bge-small-en-v1.5 (384-d) | **Bedrock** Titan Text Embeddings v2 or Cohere Embed. Requires re-indexing with the new dimension. |
 | `LLM` | Ollama llama3.1:8b / Anthropic API | **Bedrock** Claude (`AnthropicLLM` → `AnthropicBedrock` client) |
+| `rag/agent.py` | Anthropic tool-use loop | **Bedrock** Converse API with the same tool schemas, or a Bedrock Agent with search as an action group (Lambda) |
 | `rerank` | bge-reranker-base | **Bedrock** Rerank API (Cohere Rerank / Amazon Rerank) |
 | `docs/` | Local folder | **S3** bucket; ingest runs as a Lambda triggered on upload |
 | `guard.redact` | Presidio | Presidio in Lambda, or Comprehend PII detection / Bedrock Guardrails |
