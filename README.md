@@ -130,11 +130,13 @@ Example: `"Our LIMS uses a shared analyst login. Audit trails are off for perfor
 
 OpenSearch must be running. The first call loads the models and takes a few seconds.
 
-## Swap to AWS
+## Swap to AWS (design note)
 
-Each component sits behind a protocol in `rag/interfaces.py`. Moving to AWS means writing a new implementation of each one; the retrieval, generation, and guard logic stays the same.
+> **This demo runs entirely locally and uses no AWS services, accounts, or credentials.** This section only sketches how the same design could later move to AWS. Nothing here is implemented.
 
-| Interface / component | Local | AWS |
+Each component sits behind a protocol in `rag/interfaces.py`. A move to AWS would mean writing a new implementation of each one, while the retrieval, generation, and guard logic stayed the same.
+
+| Interface / component | Runs today (local) | Possible AWS equivalent (not implemented) |
 |---|---|---|
 | `Store` | OpenSearch 2.x in Docker | **Amazon OpenSearch Service** (BM25 + kNN in one index; hybrid works unchanged). **S3 Vectors** is a cheaper option for the vector side, but it has no BM25, so hybrid would need OpenSearch anyway. |
 | `Embedder` | bge-small-en-v1.5 (384-d) | **Bedrock** Titan Text Embeddings v2 or Cohere Embed. Requires re-indexing with the new dimension. |
