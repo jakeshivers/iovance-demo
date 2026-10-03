@@ -57,5 +57,8 @@ config.yaml           # llm: ollama|anthropic, retrieval: vector|hybrid|hybrid_r
 **8. UI (only after 1–7 pass)** — Single file `app.py`, Streamlit. Question box; answer with citations; expandable source cards (doc, section, page, text, rerank score); dropdown for retrieval mode; distinct refusal display. Calls existing rag functions only — no new logic, no styling work.
 ✅ `streamlit run app.py` answers a question in all three modes.
 
+**9. Agent** — `rag/agent.py`: compliance gap assessor. Raw Anthropic tool-use loop (no agent framework). Input: system/SOP description (PII-redacted). Tools: `search_regulatory_docs` (same as MCP) and `report_findings` (claim, verdict compliant|gap|unclear, severity, citation, remediation). Max 10 turns. Findings whose citation was not in retrieved results are flagged (output guardrail).
+✅ `python -m rag.agent "<LIMS scenario>"` flags shared logins and disabled audit trails as cited gaps.
+
 ## Out of Scope
 Auth, multi-tenancy, streaming, Docker for the app itself, AWS deployment, any extra models.
