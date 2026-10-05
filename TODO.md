@@ -52,6 +52,8 @@ Last updated: 2026-10-02 · Repo: https://github.com/jakeshivers/iovance-demo (p
   Note: Desktop's Claude isn't bound by our "context only" prompt — its §11.10(e) summary was uncited own knowledge.
 
 ## Environment notes
+- Claude Desktop (Linux beta) installed from Anthropic's apt repo (`/etc/apt/sources.list.d/claude-desktop.list`);
+  updates via `sudo apt update && sudo apt upgrade`. Install leftovers in the repo dir (.deb, `apt`/`sudo`/`update`) removed.
 - Claude Desktop MCP config: `~/.config/Claude/claude_desktop_config.json` → `mcpServers.regulatory-docs`
   (absolute `uv` path). Logs: `~/.config/Claude/logs/mcp-server-regulatory-docs.log`.
 - Ollama installed user-local (no sudo): `~/.local/ollama/bin/ollama serve`. Not on PATH; restart after reboot.
