@@ -8,7 +8,7 @@
 {"q": "What counts as metadata for CGMP records?", "expected_section": "data_integrity_cgmp_2018 §III.1.b", "should_refuse": false}
 {"q": "How does FDA define data integrity and the ALCOA principles?", "expected_section": "data_integrity_cgmp_2018 §III.1.a", "should_refuse": false}
 {"q": "Which personnel are responsible for reviewing audit trails for CGMP records?", "expected_section": "data_integrity_cgmp_2018 §III.7", "should_refuse": false}
-{"q": "Is it acceptable for laboratory analysts to share a single login account?", "expected_section": "data_integrity_cgmp_2018 §III.5", "should_refuse": false}
+{"q": "Why is FDA concerned about analysts sharing a single login account?", "expected_section": "data_integrity_cgmp_2018 §III.5", "should_refuse": false}
 {"q": "How should uncontrolled blank forms such as batch record templates be managed?", "expected_section": "data_integrity_cgmp_2018 §III.6", "should_refuse": false}
 {"q": "Can a firm invalidate an out-of-specification test result and leave it out of compliance decisions?", "expected_section": "data_integrity_cgmp_2018 §III.2", "should_refuse": false}
 {"q": "Can FDA investigators examine electronic records during a CGMP inspection?", "expected_section": "data_integrity_cgmp_2018 §III.17", "should_refuse": false}
